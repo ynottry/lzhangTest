@@ -1,0 +1,700 @@
+StartblockIndex 100 
+Preblocks 1
+testInterval 500
+StartblockIndex 100 
+Preblocks 1
+testInterval 500
+StartblockIndex 100 
+Preblocks 1
+testInterval 500
+ 26	18 	9610614.692 
+testInterval 1000
+ 198	18 	7945352.301 
+testInterval 2000
+ 263	18 	10220607.744 
+Preblocks 2
+testInterval 500
+ 26	24 	10985955.534 
+testInterval 1000
+ 198	24 	6578657.395 
+testInterval 2000
+ 263	24 	8912433.507 
+Preblocks 3
+testInterval 500
+ 26	36 	9213923.308 
+testInterval 1000
+ 198	36 	9913986.619 
+testInterval 2000
+ 263	36 	5477499.415 
+Preblocks 4
+testInterval 500
+ 26	132 	7205043.564 
+testInterval 1000
+ 198	132 	5051937.194 
+testInterval 2000
+ 263	132 	5109028.035 
+Preblocks 5
+testInterval 500
+ 26	144 	7727159.515 
+testInterval 1000
+ 198	144 	4959539.981 
+testInterval 2000
+ 263	144 	4524960.181 
+Preblocks 6
+testInterval 500
+ 26	234 	6357479.046 
+testInterval 1000
+ 198	234 	2571905.032 
+testInterval 2000
+ 263	234 	2741345.658 
+Preblocks 7
+testInterval 500
+ 26	239 	6737889.212 
+testInterval 1000
+ 198	239 	2915715.716 
+testInterval 2000
+ 263	239 	2587236.063 
+Preblocks 8
+testInterval 500
+ 26	248 	6371508.956 
+testInterval 1000
+ 198	248 	2406701.423 
+testInterval 2000
+ 263	248 	3706764.754 
+Preblocks 9
+testInterval 500
+ 26	322 	6385607.529 
+testInterval 1000
+ 198	322 	2590418.465 
+testInterval 2000
+ 263	322 	2043148.824 
+Preblocks 10
+testInterval 500
+ 26	356 	6387296.602 
+testInterval 1000
+ 198	356 	2397103.557 
+testInterval 2000
+ 263	356 	2060221.454 
+Preblocks 11
+testInterval 500
+ 26	457 	6422983.079 
+testInterval 1000
+ 198	457 	2368643.187 
+testInterval 2000
+ 263	457 	2297141.232 
+Preblocks 12
+testInterval 500
+ 26	569 	6446220.432 
+testInterval 1000
+ 198	569 	2349835.676 
+testInterval 2000
+ 263	569 	2049192.850 
+Preblocks 13
+testInterval 500
+ 26	585 	6458369.319 
+testInterval 1000
+ 198	585 	2344327.801 
+testInterval 2000
+ 263	585 	2036342.765 
+Preblocks 14
+testInterval 500
+ 26	676 	6434603.521 
+testInterval 1000
+ 198	676 	2345144.568 
+testInterval 2000
+ 263	676 	2047492.203 
+Preblocks 15
+testInterval 500
+ 26	686 	6458575.143 
+testInterval 1000
+ 198	686 	2356766.809 
+testInterval 2000
+ 263	686 	2036448.260 
+Preblocks 16
+testInterval 500
+ 26	701 	6449979.988 
+testInterval 1000
+ 198	701 	2450026.702 
+testInterval 2000
+ 263	701 	2036543.817 
+Preblocks 17
+testInterval 500
+ 26	710 	6397464.625 
+testInterval 1000
+ 198	710 	2344394.986 
+testInterval 2000
+ 263	710 	2037778.716 
+Preblocks 18
+testInterval 500
+ 26	726 	6460411.086 
+testInterval 1000
+ 198	726 	2343979.392 
+testInterval 2000
+ 263	726 	2036781.145 
+Preblocks 19
+testInterval 500
+ 26	742 	6453873.913 
+testInterval 1000
+ 198	742 	2344782.158 
+testInterval 2000
+ 263	742 	2041175.428 
+Preblocks 20
+testInterval 500
+ 26	746 	6444968.872 
+testInterval 1000
+ 198	746 	2345823.938 
+testInterval 2000
+ 263	746 	2071610.493 
+Preblocks 21
+testInterval 500
+ 26	795 	6372830.962 
+testInterval 1000
+ 198	795 	2355533.514 
+testInterval 2000
+ 263	795 	2042974.691 
+Preblocks 22
+testInterval 500
+ 26	812 	6464045.523 
+testInterval 1000
+ 198	812 	2344398.661 
+testInterval 2000
+ 263	812 	2181465.431 
+Preblocks 23
+testInterval 500
+ 26	869 	6433842.685 
+testInterval 1000
+ 198	869 	2345642.068 
+testInterval 2000
+ 263	869 	2036888.545 
+Preblocks 24
+testInterval 500
+ 26	881 	6405533.753 
+testInterval 1000
+ 198	881 	2361314.425 
+testInterval 2000
+ 263	881 	2047699.148 
+Preblocks 25
+testInterval 500
+ 26	933 	6449111.240 
+testInterval 1000
+ 198	933 	2344032.946 
+testInterval 2000
+ 263	933 	2037031.661 
+Preblocks 26
+testInterval 500
+ 26	1014 	6451996.695 
+testInterval 1000
+ 198	1014 	2381391.977 
+testInterval 2000
+ 263	1014 	2037816.230 
+Preblocks 27
+testInterval 500
+ 26	1116 	6454369.450 
+testInterval 1000
+ 198	1116 	2346100.404 
+testInterval 2000
+ 263	1116 	2052705.295 
+Preblocks 28
+testInterval 500
+ 26	1138 	6455723.558 
+testInterval 1000
+ 198	1138 	2344640.068 
+testInterval 2000
+ 263	1138 	2036473.224 
+Preblocks 29
+testInterval 500
+ 26	1269 	6453975.222 
+testInterval 1000
+ 198	1269 	2345680.565 
+testInterval 2000
+ 263	1269 	2037725.468 
+Preblocks 30
+testInterval 500
+ 26	1283 	6467343.820 
+testInterval 1000
+ 198	1283 	2345698.058 
+testInterval 2000
+ 263	1283 	2037297.845 
+Preblocks 31
+testInterval 500
+ 26	1308 	6465040.969 
+testInterval 1000
+ 198	1308 	2347797.622 
+testInterval 2000
+ 263	1308 	2037951.893 
+Preblocks 32
+testInterval 500
+ 26	1370 	6440993.478 
+testInterval 1000
+ 198	1370 	2345033.169 
+testInterval 2000
+ 263	1370 	2037549.884 
+Preblocks 33
+testInterval 500
+ 26	1426 	6454147.475 
+testInterval 1000
+ 198	1426 	2344033.597 
+testInterval 2000
+ 263	1426 	2036407.882 
+Preblocks 34
+testInterval 500
+ 26	1507 	6462800.966 
+testInterval 1000
+ 198	1507 	2345464.886 
+testInterval 2000
+ 263	1507 	2037092.765 
+Preblocks 35
+testInterval 500
+ 26	1512 	6465530.851 
+testInterval 1000
+ 198	1512 	2352370.403 
+testInterval 2000
+ 263	1512 	2037757.811 
+Preblocks 36
+testInterval 500
+ 26	1568 	6458576.230 
+testInterval 1000
+ 198	1568 	2344412.200 
+testInterval 2000
+ 263	1568 	2039126.332 
+Preblocks 37
+testInterval 500
+ 26	1576 	6467674.984 
+testInterval 1000
+ 198	1576 	2346146.613 
+testInterval 2000
+ 263	1576 	2036842.754 
+Preblocks 38
+testInterval 500
+ 26	1585 	6459518.905 
+testInterval 1000
+ 198	1585 	2346781.108 
+testInterval 2000
+ 263	1585 	2037467.004 
+Preblocks 39
+testInterval 500
+ 26	1601 	6454252.121 
+testInterval 1000
+ 198	1601 	2344935.692 
+testInterval 2000
+ 263	1601 	2037684.012 
+Preblocks 40
+testInterval 500
+ 26	1631 	6458623.917 
+testInterval 1000
+ 198	1631 	2345060.032 
+testInterval 2000
+ 263	1631 	2036424.502 
+Preblocks 41
+testInterval 500
+ 26	1648 	6450536.700 
+testInterval 1000
+ 198	1648 	2346918.934 
+testInterval 2000
+ 263	1648 	2037915.345 
+Preblocks 42
+testInterval 500
+ 26	1662 	6462172.437 
+testInterval 1000
+ 198	1662 	2346356.193 
+testInterval 2000
+ 263	1662 	2036878.028 
+Preblocks 43
+testInterval 500
+ 26	1700 	6469163.838 
+testInterval 1000
+ 198	1700 	2345764.659 
+testInterval 2000
+ 263	1700 	2038093.191 
+Preblocks 44
+testInterval 500
+ 26	1769 	6453560.147 
+testInterval 1000
+ 198	1769 	2346841.538 
+testInterval 2000
+ 263	1769 	2038194.140 
+Preblocks 45
+testInterval 500
+ 26	1873 	6469519.953 
+testInterval 1000
+ 198	1873 	2346886.601 
+testInterval 2000
+ 263	1873 	2038043.980 
+Preblocks 46
+testInterval 500
+ 26	1887 	6461252.398 
+testInterval 1000
+ 198	1887 	2347087.987 
+testInterval 2000
+ 263	1887 	2037312.256 
+Preblocks 47
+testInterval 500
+ 26	1965 	6468764.013 
+testInterval 1000
+ 198	1965 	2347025.108 
+testInterval 2000
+ 263	1965 	2036476.753 
+Preblocks 48
+testInterval 500
+ 26	1969 	6470554.297 
+testInterval 1000
+ 198	1969 	2346052.389 
+testInterval 2000
+ 263	1969 	2038408.882 
+Preblocks 49
+testInterval 500
+ 26	2049 	6462025.083 
+testInterval 1000
+ 198	2049 	2347027.817 
+testInterval 2000
+ 263	2049 	2038419.313 
+Preblocks 50
+testInterval 500
+ 26	2081 	6470751.838 
+testInterval 1000
+ 198	2081 	2347274.904 
+testInterval 2000
+ 263	2081 	2038465.330 
+Preblocks 51
+testInterval 500
+ 26	2222 	6471286.989 
+testInterval 1000
+ 198	2222 	2347199.578 
+testInterval 2000
+ 263	2222 	2038469.228 
+Preblocks 52
+testInterval 500
+ 26	2238 	6470969.588 
+testInterval 1000
+ 198	2238 	2346594.864 
+testInterval 2000
+ 263	2238 	2037779.792 
+Preblocks 53
+testInterval 500
+ 26	2283 	6463329.706 
+testInterval 1000
+ 198	2283 	2346322.260 
+testInterval 2000
+ 263	2283 	2038482.545 
+Preblocks 54
+testInterval 500
+ 26	2315 	6471116.639 
+testInterval 1000
+ 198	2315 	2347422.919 
+testInterval 2000
+ 263	2315 	2038175.443 
+Preblocks 55
+testInterval 500
+ 26	2350 	6469962.543 
+testInterval 1000
+ 198	2350 	2346082.918 
+testInterval 2000
+ 263	2350 	2038491.448 
+Preblocks 56
+testInterval 500
+ 26	2364 	6470845.340 
+testInterval 1000
+ 198	2364 	2347412.174 
+testInterval 2000
+ 263	2364 	2038456.994 
+Preblocks 57
+testInterval 500
+ 26	2437 	6470974.559 
+testInterval 1000
+ 198	2437 	2347519.569 
+testInterval 2000
+ 263	2437 	2038637.868 
+Preblocks 58
+testInterval 500
+ 26	2475 	6467322.124 
+testInterval 1000
+ 198	2475 	2347537.441 
+testInterval 2000
+ 263	2475 	2038565.126 
+Preblocks 59
+testInterval 500
+ 26	2593 	6471467.194 
+testInterval 1000
+ 198	2593 	2347638.085 
+testInterval 2000
+ 263	2593 	2038529.169 
+Preblocks 60
+testInterval 500
+ 26	2626 	6471003.874 
+testInterval 1000
+ 198	2626 	2346384.666 
+testInterval 2000
+ 263	2626 	2038462.358 
+Preblocks 61
+testInterval 500
+ 26	2698 	6470831.161 
+testInterval 1000
+ 198	2698 	2347731.594 
+testInterval 2000
+ 263	2698 	2038783.812 
+Preblocks 62
+testInterval 500
+ 26	2702 	6472477.958 
+testInterval 1000
+ 198	2702 	2347507.213 
+testInterval 2000
+ 263	2702 	2037915.249 
+Preblocks 63
+testInterval 500
+ 26	2743 	6471664.141 
+testInterval 1000
+ 198	2743 	2347555.671 
+testInterval 2000
+ 263	2743 	2038431.152 
+Preblocks 64
+testInterval 500
+ 26	2883 	6472421.794 
+testInterval 1000
+ 198	2883 	2347796.961 
+testInterval 2000
+ 263	2883 	2038797.646 
+Preblocks 65
+testInterval 500
+ 26	3009 	6470083.656 
+testInterval 1000
+ 198	3009 	2347007.048 
+testInterval 2000
+ 263	3009 	2038415.819 
+Preblocks 66
+testInterval 500
+ 26	3020 	6470430.958 
+testInterval 1000
+ 198	3020 	2346455.306 
+testInterval 2000
+ 263	3020 	2038434.750 
+Preblocks 67
+testInterval 500
+ 26	3059 	6469588.629 
+testInterval 1000
+ 198	3059 	2347138.304 
+testInterval 2000
+ 263	3059 	2038229.790 
+Preblocks 68
+testInterval 500
+ 26	3155 	6466856.050 
+testInterval 1000
+ 198	3155 	2347208.921 
+testInterval 2000
+ 263	3155 	2038467.641 
+Preblocks 69
+testInterval 500
+ 26	3231 	6470637.766 
+testInterval 1000
+ 198	3231 	2347485.541 
+testInterval 2000
+ 263	3231 	2038388.984 
+Preblocks 70
+testInterval 500
+ 26	3381 	6468465.757 
+testInterval 1000
+ 198	3381 	2346996.989 
+testInterval 2000
+ 263	3381 	2038492.066 
+Preblocks 71
+testInterval 500
+ 26	3396 	6470569.069 
+testInterval 1000
+ 198	3396 	2347327.221 
+testInterval 2000
+ 263	3396 	2038522.332 
+Preblocks 72
+testInterval 500
+ 26	3423 	6471066.667 
+testInterval 1000
+ 198	3423 	2347280.602 
+testInterval 2000
+ 263	3423 	2038505.334 
+Preblocks 73
+testInterval 500
+ 26	3476 	6470663.868 
+testInterval 1000
+ 198	3476 	2347168.513 
+testInterval 2000
+ 263	3476 	2038436.568 
+Preblocks 74
+testInterval 500
+ 26	3566 	6470641.531 
+testInterval 1000
+ 198	3566 	2347415.678 
+testInterval 2000
+ 263	3566 	2038465.417 
+Preblocks 75
+testInterval 500
+ 26	3579 	6471056.685 
+testInterval 1000
+ 198	3579 	2347300.058 
+testInterval 2000
+ 263	3579 	2038497.608 
+Preblocks 76
+testInterval 500
+ 26	3606 	6471201.267 
+testInterval 1000
+ 198	3606 	2347485.101 
+testInterval 2000
+ 263	3606 	2038614.605 
+Preblocks 77
+testInterval 500
+ 26	3685 	6470198.935 
+testInterval 1000
+ 198	3685 	2347274.523 
+testInterval 2000
+ 263	3685 	2038394.968 
+Preblocks 78
+testInterval 500
+ 26	3737 	6470213.898 
+testInterval 1000
+ 198	3737 	2347347.009 
+testInterval 2000
+ 263	3737 	2038490.570 
+Preblocks 79
+testInterval 500
+ 26	3766 	6470615.078 
+testInterval 1000
+ 198	3766 	2347274.401 
+testInterval 2000
+ 263	3766 	2038407.482 
+Preblocks 80
+testInterval 500
+ 26	3781 	6471005.559 
+testInterval 1000
+ 198	3781 	2347351.009 
+testInterval 2000
+ 263	3781 	2038351.228 
+Preblocks 81
+testInterval 500
+ 26	3793 	6470430.934 
+testInterval 1000
+ 198	3793 	2347230.843 
+testInterval 2000
+ 263	3793 	2038440.968 
+Preblocks 82
+testInterval 500
+ 26	3846 	6470829.164 
+testInterval 1000
+ 198	3846 	2347350.205 
+testInterval 2000
+ 263	3846 	2038483.386 
+Preblocks 83
+testInterval 500
+ 26	3939 	6470868.101 
+testInterval 1000
+ 198	3939 	2347233.370 
+testInterval 2000
+ 263	3939 	2038420.952 
+Preblocks 84
+testInterval 500
+ 26	3954 	6470818.319 
+testInterval 1000
+ 198	3954 	2347295.643 
+testInterval 2000
+ 263	3954 	2038543.939 
+Preblocks 85
+testInterval 500
+ 26	3956 	6471260.685 
+testInterval 1000
+ 198	3956 	2347362.313 
+testInterval 2000
+ 263	3956 	2038602.962 
+Preblocks 86
+testInterval 500
+ 26	4104 	6470185.592 
+testInterval 1000
+ 198	4104 	2347345.561 
+testInterval 2000
+ 263	4104 	2038500.641 
+Preblocks 87
+testInterval 500
+ 26	4109 	6470827.899 
+testInterval 1000
+ 198	4109 	2347442.401 
+testInterval 2000
+ 263	4109 	2038583.848 
+Preblocks 88
+testInterval 500
+ 26	4193 	6471202.096 
+testInterval 1000
+ 198	4193 	2347457.864 
+testInterval 2000
+ 263	4193 	2038518.131 
+Preblocks 89
+testInterval 500
+ 26	4237 	6471466.110 
+testInterval 1000
+ 198	4237 	2347384.697 
+testInterval 2000
+ 263	4237 	2038514.527 
+Preblocks 90
+testInterval 500
+ 26	4287 	6471255.660 
+testInterval 1000
+ 198	4287 	2347356.858 
+testInterval 2000
+ 263	4287 	2038646.346 
+Preblocks 91
+testInterval 500
+ 26	4349 	6471288.000 
+testInterval 1000
+ 198	4349 	2347569.111 
+testInterval 2000
+ 263	4349 	2038666.923 
+Preblocks 92
+testInterval 500
+ 26	4356 	6471108.125 
+testInterval 1000
+ 198	4356 	2347574.112 
+testInterval 2000
+ 263	4356 	2038554.840 
+Preblocks 93
+testInterval 500
+ 26	4360 	6471199.774 
+testInterval 1000
+ 198	4360 	2347508.092 
+testInterval 2000
+ 263	4360 	2038514.153 
+Preblocks 94
+testInterval 500
+ 26	4396 	6471155.491 
+testInterval 1000
+ 198	4396 	2347459.823 
+testInterval 2000
+ 263	4396 	2038700.647 
+Preblocks 95
+testInterval 500
+ 26	4448 	6470505.366 
+testInterval 1000
+ 198	4448 	2347238.147 
+testInterval 2000
+ 263	4448 	2038364.917 
+Preblocks 96
+testInterval 500
+ 26	4492 	6470318.888 
+testInterval 1000
+ 198	4492 	2347382.532 
+testInterval 2000
+ 263	4492 	2038318.878 
+Preblocks 97
+testInterval 500
+ 26	4501 	6470464.900 
+testInterval 1000
+ 198	4501 	2347355.808 
+testInterval 2000
+ 263	4501 	2038444.126 
+Preblocks 98
+testInterval 500
+ 26	4643 	6470931.314 
+testInterval 1000
+ 198	4643 	2347303.238 
+testInterval 2000
+ 263	4643 	2038626.296 
+Preblocks 99
+testInterval 500
+ 26	4706 	6471415.337 
+testInterval 1000
+ 198	4706 	2347555.977 
+testInterval 2000
+ 263	4706 	2038462.785 
