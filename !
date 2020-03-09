@@ -1,0 +1,575 @@
+'''
+Created on 4 Jun. 2019
+
+@author: limengzhang
+'''
+import keras
+from keras.layers import Input, Embedding, LSTM, Dense,Dropout,Bidirectional
+from keras.models import Model
+import numpy as np
+from math import sqrt
+from sklearn.metrics import mean_squared_error
+import math
+from sklearn.preprocessing import MinMaxScaler
+import pandas as pd
+import time
+from keras.models import Sequential
+from sklearn.preprocessing import LabelEncoder
+
+#tx_features = ['tx_index', 'vin_sz', 'vout_sz', 'fee', 'ver', 'size', 'weight', 'time', 'relayed_by', 'lock_time',
+#               'block_height', 'block_index',confimredtime, waiting time,feerate]
+
+
+#
+# data = pd.read_csv('../txinblock2.csv', sep=",",
+#                    names=['tx_index', 'vin_sz', 'vout_sz', 'ver', 'size', 'weight', 'time', 'relayed_by', 'lock_time',
+#                           'fee',
+#                           'block_height', 'block_index', 'confirmedtime', 'watingtime', 'feerate', 'enterBlock',
+#                           'watiingblock'])
+
+blockHeightIndex = 10
+confirmedtimeintx = 12
+feerateintx = 14
+enterBlockintx=15
+
+feeintx=9
+waitingblock=16
+intx=1
+outtx=2
+vertx=3
+sizeintx=4
+weightintx=5
+receivetimeintx = 6
+relayintx=7
+
+
+
+
+
+
+blockHeightInBlock=1
+n_txBinx=2
+sizeBinx=3
+bitsBinx=4
+feeBinx=5
+verBinx=6
+timeBinx=7
+intervalBinx=8
+
+
+
+
+
+
+training_blocks=90
+
+
+lstmunits=32
+lstmtimestamps=3
+layers=[64,8,1]
+prediction_epoch=100
+bachsize=1000
+
+# Target aim  to estimation transaction fee confirmed within CONFTarget
+
+TxFeatureSelection=[intx, outtx, vertx, sizeintx, weightintx, relayintx, enterBlockintx,waitingblock]
+BocFeatureSelection=[n_txBinx,sizeBinx,bitsBinx,feeBinx,intervalBinx]
+
+
+
+MIN_BUCKET_FEERATE = 0.1
+MAX_BUCKET_FEERATE = 1e4
+FEE_SPACING = 1.05
+
+MaxTXNumMempool=3000
+
+
+optimizer_model='adam'
+dropout_factor=0
+
+
+
+START_EstimateBlock=516738
+total_EstimateBlock=100
+
+result_path = './NeuarlResult/ResultFor90Blocks/'
+
+
+# Txfeatures=[in,out,size,weight,ver,enterBlock,waitingblock]
+# output=[ferate]
+
+
+#getData by analysisinf tx fee rate distribution.
+
+log = open('ResultPrediction'+str(training_blocks)+'.txt','a')
+log.write('\nAdding dropout'+str(dropout_factor)+' and modify '+optimizer_model+' epoch'+str(prediction_epoch)+' LSTM unites'+str(lstmunits))
+
+
+def searchtxretrivalIndex(txcollection, blockHeight):
+  txpos = -1
+  for i in range(txcollection.__len__()):
+    if int(txcollection[i][blockHeightIndex]) == blockHeight:
+      txpos = i
+      break
+  return txpos
+
+def calBucketIndex(feerate, bucketBoundary, fee_spacing):
+  minfee = bucketBoundary[0]
+  if feerate < MIN_BUCKET_FEERATE:
+    index = 0
+  else:
+    cfee = feerate / minfee
+    index = math.log(cfee, fee_spacing)
+  if index - int(index) > 0:
+    index = int(index + 1)
+  else:
+    index = int(index)
+  return index
+
+# Tx generated and confirmed in [3,5]
+def txDatasetConstruction(txcollection,blockend_pos,lstmtimestamps,blockstar_index):
+  start_height=blockstar_index+blockend_pos+1
+  txcollection_selected = txcollection[np.where((txcollection[:, enterBlockintx] ==start_height))]
+
+  # #data = pd.read_csv('../txinblock2.csv', sep=",",
+  #                    names=['tx_index', 'vin_sz', 'vout_sz', 'ver', 'size', 'weight', 'time', 'relayed_by', 'lock_time',
+  #                           'fee',
+  #                           'block_height', 'block_index', 'confirmedtime', 'watingtime', 'feerate', 'enterBlock',
+  #                           'watiingblock'])
+
+  tx_list=[]
+  tx_fee=[]
+  tx_list.extend(txcollection_selected[:, TxFeatureSelection].tolist())
+  tx_fee.extend(txcollection_selected[:,feerateintx].tolist())
+  return tx_list,tx_fee
+
+
+def mempoolConstruction(txcollection, pos, blockstar_index,bucketBoundary):
+  mempool_state = np.zeros((bucketBoundary.__len__()))
+  limit=blockstar_index+pos
+  txs_selected = txcollection[np.where((txcollection[:, enterBlockintx] <= limit)&
+                                       (txcollection[:, blockHeightIndex]>limit))]
+  for tx in txs_selected:
+    feerate=tx[feerateintx]
+    bucketindex=calBucketIndex(feerate, bucketBoundary, FEE_SPACING)
+    mempool_state[bucketindex]=mempool_state[bucketindex]+1
+
+  return mempool_state
+
+
+
+
+
+
+
+def constructBSETandTxSet( txcollection,lstmtimestamps,blockstar_index,block_pos,blockData_series):
+  blockSet=[]
+  txSet=[]
+  txFeeSet=[]
+  mempoolState=[]
+  for i in range(block_pos.__len__()):
+    tx_list,tx_fee=txDatasetConstruction(txcollection,block_pos[i],lstmtimestamps,blockstar_index)
+    mempool_state=mempoolConstruction(txcollection,block_pos[i],blockstar_index,bucketBoundary)
+    txSet.extend(tx_list)
+    txFeeSet.extend(tx_fee)
+    for j in range(tx_list.__len__()):
+      blockSet.append(blockData_series[i])
+      mempoolState.append(mempool_state)
+  return blockSet, txSet, txFeeSet,mempoolState
+
+
+
+# def constructBlockSeries(blockdata,blockStartHeight,lstmtimestamps,blocks):
+#  # keys = ['block_index', 'height', 'n_tx', 'size', 'bits', 'fee', 'ver', 'time','interval']
+#   scaler2 = MinMaxScaler(feature_range=(0, 1))
+#   scaledData = scaler2.fit_transform(blockdata)
+#
+#   blockdata_selected=blockdata[np.where((blockdata[:, blockHeightInBlock] >= blockStartHeight) &
+#                       (blockdata[:, blockHeightInBlock] <blockStartHeight+blocks))]
+#   blockdata_selected=scaler2.transform(blockdata_selected)
+# # select blockFeatures=[n_tx,size,diffulty,fee,time]
+#   blockdata_nonID=blockdata_selected[:,BocFeatureSelection]
+#   blockData_series=blockdata_nonID.reshape(int(blocks/lstmtimestamps),lstmtimestamps,blockdata_nonID.shape[1])
+#   block_pos=np.arange(lstmtimestamps-1,blocks,lstmtimestamps)
+#   return blockData_series,block_pos
+
+
+
+def constructBlockSeries2(blockdata,blockStartHeight,lstmtimestamps,blocks,windowwshift=1):
+ # keys = ['block_index', 'height', 'n_tx', 'size', 'bits', 'fee', 'ver', 'time','interval']
+  scaler2 = MinMaxScaler(feature_range=(0, 1))
+  scaledData = scaler2.fit_transform(blockdata)
+
+  blockdata_selected=blockdata[np.where((blockdata[:, blockHeightInBlock] >= blockStartHeight) &
+                      (blockdata[:, blockHeightInBlock] <blockStartHeight+blocks))]
+  blockdata_selected=scaler2.transform(blockdata_selected)
+  blockdata_nonID=blockdata_selected[:,BocFeatureSelection]
+  tempseries=[]
+  pos=[]
+  for i in range(0,blocks-lstmtimestamps):
+    cur_series=blockdata_nonID[i:i+lstmtimestamps,:]
+    tempseries.append(cur_series)
+    pos.append(i+lstmtimestamps-1)
+  blockData_series=np.array(tempseries)
+  block_pos=np.array(pos)
+  return blockData_series,block_pos
+
+
+def constructBlockSeriesTest(blockdata,blockStartHeight,lstmtimestamps,blocks):
+ # keys = ['block_index', 'height', 'n_tx', 'size', 'bits', 'fee', 'ver', 'time','interval']
+  scaler2 = MinMaxScaler(feature_range=(0, 1))
+  scaledData = scaler2.fit_transform(blockdata)
+
+  blockdata_selected=blockdata[np.where((blockdata[:, blockHeightInBlock] >= blockStartHeight) &
+                      (blockdata[:, blockHeightInBlock] <blockStartHeight+blocks))]
+  blockdata_selected=scaler2.transform(blockdata_selected)
+  blockdata_nonID=blockdata_selected[:,BocFeatureSelection]
+  blockData_series = blockdata_nonID.reshape(1, lstmtimestamps, blockdata_nonID.shape[1])
+  block_pos=np.array([2])
+  return blockData_series,block_pos
+
+
+def blockModelBidirectional(layers,lstmunits,lstmtimestamps,blockFeatureDim,txFeatureDim):
+  np.random.seed(9)
+  main_input = Input(shape=(lstmtimestamps, blockFeatureDim), name='main_input')
+  lstm_out  = Bidirectional(LSTM(lstmunits))(main_input)
+  auxiliary_input = Input(shape=(txFeatureDim,), name='tx_input')
+  merged_vector = keras.layers.concatenate([lstm_out, auxiliary_input], axis=-1)
+  merged_vector = Dropout(dropout_factor)(merged_vector)
+  layer1_vector = Dense(layers[0],kernel_initializer='uniform', activation='relu')(merged_vector)
+  layer2_vector = Dense(layers[1], activation='relu')(layer1_vector)
+  predictions = Dense(layers[2], activation='sigmoid')(layer2_vector)
+  model = Model(inputs=[main_input, auxiliary_input], outputs=predictions)
+  model.compile(loss='mse', optimizer=optimizer_model)
+  return model
+
+def blockModel(layers,lstmunits,lstmtimestamps,blockFeatureDim,txFeatureDim):
+  np.random.seed(9)
+  main_input = Input(shape=(lstmtimestamps, blockFeatureDim), name='main_input')
+  lstm_out  = LSTM(lstmunits)(main_input)
+  auxiliary_input = Input(shape=(txFeatureDim,), name='tx_input')
+  merged_vector = keras.layers.concatenate([lstm_out, auxiliary_input], axis=-1)
+  merged_vector = Dropout(dropout_factor)(merged_vector)
+  layer1_vector = Dense(layers[0],kernel_initializer='uniform', activation='relu')(merged_vector)
+  layer1_vector=Dropout(dropout_factor)(layer1_vector)
+  layer2_vector = Dense(layers[1], activation='relu')(layer1_vector)
+  layer2_vector = Dropout(dropout_factor)(layer2_vector)
+  predictions = Dense(layers[2], activation='sigmoid')(layer2_vector)
+  model = Model(inputs=[main_input, auxiliary_input], outputs=predictions)
+  model.compile(loss='mse', optimizer=optimizer_model)
+  return model
+
+########################Define Models
+
+def mempoolModel(layers,lstmunits,lstmtimestamps,blockFeatureDim,mempoolDim,txFeatureDim):
+  np.random.seed(9)
+  model2_input1 = Input(shape=(lstmtimestamps, blockFeatureDim), name='model2_input1')
+  model2_lstm_out = LSTM(lstmunits)(model2_input1)
+  model2_input2 = Input(shape=(mempoolDim,), name='model2_input2')
+  model2_auxiliary_input = Input(shape=(txFeatureDim,), name='model2_tx_input')
+  model2_merged_vector = keras.layers.concatenate([model2_lstm_out, model2_input2, model2_auxiliary_input], axis=-1)
+  model2_merged_vector = Dropout(dropout_factor)(model2_merged_vector)
+  model2_layer1_vector = Dense(layers[0],kernel_initializer='uniform', activation='relu')(model2_merged_vector)
+  model2_layer1_vector=Dropout(dropout_factor)(model2_layer1_vector)
+  model2_layer2_vector = Dense(layers[1], activation='relu')(model2_layer1_vector)
+  model2_layer2_vector=Dropout(dropout_factor)(model2_layer2_vector)
+  model2_predictions = Dense(layers[2], activation='sigmoid')(model2_layer2_vector)
+  model2 = Model(inputs=[model2_input1, model2_input2, model2_auxiliary_input], outputs=model2_predictions)
+  model2.compile(loss='mse', optimizer=optimizer_model)
+  return model2
+
+
+def nnModel(layers,txFeatureDim):
+  np.random.seed(9)
+  model_nn = Sequential()
+  model_nn.add(Dropout(dropout_factor, input_shape=(txFeatureDim,)))
+  model_nn.add(Dense(layers[0], kernel_initializer='uniform', activation='relu'))
+  model_nn.add(Dropout(dropout_factor))
+  model_nn.add(Dense(layers[1], activation='relu'))
+  model_nn.add(Dropout(dropout_factor))
+  model_nn.add(Dense(layers[2], activation='sigmoid'))
+  model_nn.compile(loss='mse', optimizer=optimizer_model)
+  return model_nn
+
+def txmempoolModel(layers,txFeatureDim,mempoolDim):
+  np.random.seed(9)
+  model_input1 = Input(shape=(txFeatureDim,), name='model_input1')
+  model_input2 = Input(shape=(mempoolDim,), name='model_input2')
+  model_merged_vector = keras.layers.concatenate([ model_input1,  model_input2], axis=-1)
+  model_merged_vector = Dropout(dropout_factor)(model_merged_vector)
+  model_layer1_vector = Dense(layers[0], kernel_initializer='uniform',activation='relu')(model_merged_vector)
+  model_layer1_vector=Dropout(dropout_factor)(model_layer1_vector)
+  model_layer2_vector = Dense(layers[1], activation='relu')(model_layer1_vector)
+  model_layer2_vector=Dropout(dropout_factor)(model_layer2_vector)
+  model_predictions = Dense(layers[2], activation='sigmoid')(model_layer2_vector)
+  model = Model(inputs=[model_input1, model_input2], outputs=model_predictions)
+  model.compile(loss='mse', optimizer=optimizer_model)
+  return model
+
+
+
+
+
+def evaluatePrediction(Y_predict,testtxFeeSet):
+  rmse=[]
+  for i in range(Y_predict.__len__()):
+    inv_yHat=scaler_feerates.inverse_transform(Y_predict[i])
+    inv_y=scaler_feerates.inverse_transform(testtxFeeSet.reshape((Y_predict[i].shape[0],1)))
+    rmse.append(str(sqrt(mean_squared_error(inv_yHat, inv_y))))
+  result_str = '\t'.join(rmse)
+  return result_str
+
+
+
+
+# define history tracking
+
+class Model1Callback(keras.callbacks.Callback):
+  def __init__(self, test_data):
+    self.test_data = test_data
+  def on_train_begin(self, logs={}):
+    self.predictedResults = []
+  def on_epoch_end(self, epoch, logs={}):
+    blockSet, trainingTxSet = self.test_data
+    yHat = self.model.predict([blockSet, trainingTxSet], verbose=0)
+    self.predictedResults.append(yHat)
+
+
+
+class Model2Callback(keras.callbacks.Callback):
+  def __init__(self, test_data):
+    self.test_data = test_data
+  def on_train_begin(self, logs={}):
+    self.predictedResults = []
+  def on_epoch_end(self, epoch, logs={}):
+    blockSet, mempoolState, trainingTxSet = self.test_data
+    yHat = self.model.predict([blockSet, mempoolState, trainingTxSet], verbose=0)
+    self.predictedResults.append(yHat)
+
+
+
+
+class Model3Callback(keras.callbacks.Callback):
+  def __init__(self, test_data):
+    self.test_data = test_data
+  def on_train_begin(self, logs={}):
+    self.predictedResults = []
+  def on_epoch_end(self, epoch, logs={}):
+    trainingTxSet = self.test_data
+    yHat = self.model.predict(trainingTxSet, verbose=0)
+    self.predictedResults.append(yHat)
+
+class Model4Callback(keras.callbacks.Callback):
+  def __init__(self, test_data):
+    self.test_data = test_data
+  def on_train_begin(self, logs={}):
+    self.predictedResults = []
+  def on_epoch_end(self, epoch, logs={}):
+    trainingTxSet,mempoolState = self.test_data
+    yHat = self.model.predict([trainingTxSet,mempoolState], verbose=0)
+    self.predictedResults.append(yHat)
+
+
+
+
+#########################################################################################################
+#  Part 0-1:  Data preparation
+#########################################################################################################
+
+
+
+
+txdata = pd.read_csv('txinblock2.csv', sep=",",
+                   names=['tx_index', 'vin_sz', 'vout_sz', 'ver', 'size', 'weight', 'time', 'relayed_by', 'lock_time',
+                          'fee',
+                          'block_height', 'block_index', 'confirmedtime', 'watingtime', 'feerate', 'enterBlock',
+                          'watiingblock'])
+txdata['feerate'] = 4 * txdata['fee'] / txdata['weight']
+txdata=txdata[txdata.feerate>0]
+#data.to_csv("txinblock2_bitcore.csv",index=False,header=False)
+
+txdata=np.array(txdata)
+Samples_Y=txdata[:,feerateintx]
+Samples_Y0=Samples_Y.reshape(Samples_Y.shape[0],1)
+scaler_feerates = MinMaxScaler(feature_range=(0, 1))
+scaled_feerates = scaler_feerates.fit_transform(Samples_Y0)
+scaler_txFeatures=MinMaxScaler(feature_range=(0, 1))
+Samples_X=txdata[:,TxFeatureSelection]
+scaled_txFeatures = scaler_txFeatures.fit_transform(Samples_X)
+
+
+
+blockdataFram = pd.read_csv('block2new.csv', sep=",",
+                   names=['block_index', 'height', 'n_tx', 'size', 'bits', 'fee', 'ver', 'time'])
+blockdataFram['interval']=blockdataFram['time'].diff()
+encoder1=LabelEncoder()
+blockdataFram['bits']=encoder1.fit_transform(blockdataFram['bits'])
+encoder2=LabelEncoder()
+blockdataFram['ver']=encoder2.fit_transform(blockdataFram['ver'])
+data=np.array(blockdataFram)
+data=data[1:,:]
+#blockstart_pos : blockposition in txt
+
+
+#########################################################################################################
+#  Part 0-1:  Construct BUcket
+#########################################################################################################
+
+
+minRelayFee = MIN_BUCKET_FEERATE
+maxFee = txdata[:, 14].max(axis=0)
+
+if maxFee < MAX_BUCKET_FEERATE:
+  maxFee = MAX_BUCKET_FEERATE
+
+dbucketBoundary = minRelayFee
+bucketBoundary = [minRelayFee]
+while dbucketBoundary <= maxFee:
+  dbucketBoundary = dbucketBoundary * FEE_SPACING
+  bucketBoundary.append(dbucketBoundary)
+for i in range(total_EstimateBlock) :
+
+  blockstar_index=START_EstimateBlock-1-training_blocks+1+i
+  log.write('\nestimatedblock:' + str(blockstar_index)+'\n')
+  #remove the last lstmtimestamps series from block sequence
+  blockSeriesblock=training_blocks-lstmtimestamps
+  #trainblockData_series,trainblock_pos=constructBlockSeries(data,blockstar_index,lstmtimestamps,blockSeriesblock)
+  trainblockData_series,trainblock_pos=constructBlockSeries2(data,blockstar_index,lstmtimestamps,training_blocks)
+
+
+  blockSet,txSet,txFeeSet,mempoolState=constructBSETandTxSet( txdata,lstmtimestamps,blockstar_index,trainblock_pos,trainblockData_series)
+  # need to ensure %Lstmsttamps==0
+  testblockData_series,testblock_pos=constructBlockSeriesTest(data,blockstar_index+training_blocks-lstmtimestamps,lstmtimestamps,lstmtimestamps)
+  testblockSet,testtxSet,testtxFeeSet,testmempoolState=constructBSETandTxSet( txdata,lstmtimestamps,blockstar_index+training_blocks-lstmtimestamps,testblock_pos,testblockData_series)
+
+
+
+
+  #########################################################################################################
+  #  Part 1:  Data regularization
+  #########################################################################################################
+
+
+  # Data regularization
+  def regularizationFee(FeeSet):
+    result=[]
+    temp=np.array(FeeSet).reshape(FeeSet.__len__(),1)
+    temp2=scaler_feerates.transform(temp)
+    for i in range(FeeSet.__len__()):
+      result.extend(temp2[i])
+    return result
+  txFeeSet_norm=regularizationFee(txFeeSet)
+  testtxFeeSet_norm=regularizationFee(testtxFeeSet)
+  txSet_norm=scaler_txFeatures.transform(txSet)
+  testtxSet_norm=scaler_txFeatures.transform(testtxSet)
+  txSet_norm=np.array(txSet_norm)
+  txFeeSet_norm=np.array(txFeeSet_norm)
+  testtxFeeSet_norm=np.array(testtxFeeSet_norm)
+  testtxSet_norm=np.array(testtxSet_norm)
+  blockSet=np.array(blockSet)
+  mempoolState=np.array(mempoolState)/MaxTXNumMempool
+  testmempoolState=np.array(testmempoolState)/MaxTXNumMempool
+  txFeatures= TxFeatureSelection.__len__()
+  blockFeatures=BocFeatureSelection.__len__()
+  mempoolFeatures=bucketBoundary.__len__()
+
+
+  #########################################################################################################
+  #  Part 2:  Model Traininging
+  #########################################################################################################
+
+
+
+
+
+
+  #NNModel(tx)
+  start=time.time()
+  localtime = time.asctime(time.localtime(start))
+  nn_model=nnModel(layers,txFeatures)
+  history_model3 = Model3Callback(testtxSet_norm)
+  nn_model.fit(txSet_norm, txFeeSet_norm, epochs=prediction_epoch, batch_size=bachsize, verbose=0,
+             callbacks=[history_model3])
+  Y_predict_model3=history_model3.predictedResults
+  np.save(result_path+'predictionNNModel'+str(blockstar_index+training_blocks)+'.npy',np.array(Y_predict_model3))
+  rmse_nn=evaluatePrediction(Y_predict_model3,testtxFeeSet_norm)
+  end=time.time()
+  log.write('\n\nNN(tx)\nRunning time: '+localtime+'\n'+'Consuming(seconds):'+str(end-start)+'\n')
+  log.write('RMSE:')
+  log.write(rmse_nn)
+
+
+  #BockModel(tx+block)
+  start = time.time()
+  localtime = time.asctime(time.localtime(start))
+  block_model=blockModel(layers,lstmunits,lstmtimestamps,blockFeatures,txFeatures)
+  history_model1 = Model1Callback((testblockSet, testtxSet_norm))
+  block_model.fit([blockSet, txSet_norm], txFeeSet_norm, epochs=prediction_epoch, batch_size=bachsize, verbose=1,callbacks=[history_model1])
+  Y_predict_model1=history_model1.predictedResults
+  np.save(result_path+'predictionBlockModel'+str(blockstar_index+training_blocks)+'.npy',np.array(Y_predict_model1))
+  ## b = np.load('redictionBLockModel.npy')
+  ##b[0]=prediction result of epoch =1
+  end = time.time()
+  rmse_block = evaluatePrediction(Y_predict_model1,testtxFeeSet_norm)
+  end = time.time()
+  log.write('\n\nBlockModel(tx+block)\nRunning time: '+localtime+'\n'+'Consuming(seconds):'+str(end-start)+'\n')
+  log.write('RMSE:')
+  log.write(rmse_block)
+
+  #
+  # #BidirectionalBockModel(tx+block)
+  # start = time.time()
+  # localtime = time.asctime(time.localtime(start))
+  # block_model=blockModelBidirectional(layers,lstmunits,lstmtimestamps,blockFeatures,txFeatures)
+  # history_model1 = Model1Callback((testblockSet, testtxSet_norm))
+  # block_model.fit([blockSet, txSet_norm], txFeeSet_norm, epochs=prediction_epoch, batch_size=bachsize, verbose=1,callbacks=[history_model1])
+  # Y_predict_model1=history_model1.predictedResults
+  # np.save('./NeuarlResult/PredictionBLockModel'+str(blockstar_index+training_blocks)+'.npy',np.array(Y_predict_model1))
+  # ## b = np.load('redictionBLockModel.npy')
+  # ##b[0]=prediction result of epoch =1
+  # end = time.time()
+  # rmse_block = evaluatePrediction(Y_predict_model1,testtxFeeSet_norm)
+  # end = time.time()
+  # log.write('\n\nblockModelBidirectional(tx+block)\nRunning time: '+localtime+'\n'+'Consuming(seconds) '+str(end-start)+'\n')
+  # log.write('RMSE:')
+  # log.write(rmse_block)
+
+
+
+
+
+
+  #TxMempool(tx+mempool)
+  start=time.time()
+  localtime = time.asctime(time.localtime(start))
+  txmempool_model=txmempoolModel(layers,txFeatures,mempoolFeatures)
+  history_model4 = Model4Callback((testtxSet_norm,testmempoolState))
+  txmempool_model.fit([txSet_norm,mempoolState], txFeeSet_norm, epochs=prediction_epoch, batch_size=bachsize, verbose=1,
+             callbacks=[history_model4])
+  Y_predict_model4=history_model4.predictedResults
+  np.save(result_path+'predictionTxMempoolModel'+str(blockstar_index+training_blocks)+'.npy',np.array(Y_predict_model4))
+  rmse_nn=evaluatePrediction(Y_predict_model4,testtxFeeSet_norm)
+  end=time.time()
+  log.write('\n\nTxMempool(tx+mempool)\nRunning time: '+localtime+'\n'+'Consuming(seconds):'+str(end-start)+'\n')
+  log.write('RMSE:')
+  log.write(rmse_nn)
+
+
+
+  #MemppolModel(tx+mempool+block)
+  start = time.time()
+  localtime = time.asctime(time.localtime(start))
+  consumption_model=mempoolModel(layers,lstmunits,lstmtimestamps,blockFeatures,mempoolFeatures,txFeatures)
+  history_model2 = Model2Callback((testblockSet, testmempoolState, testtxSet_norm))
+  consumption_model.fit([blockSet, mempoolState, txSet_norm], txFeeSet_norm, epochs=prediction_epoch, batch_size=bachsize, verbose=1,callbacks=[history_model2])
+  Y_predict_model2=history_model2.predictedResults
+  np.save(result_path+'predictionMempoolModel'+str(blockstar_index+training_blocks)+'.npy',np.array(Y_predict_model2))
+  end = time.time()
+  rmse_consumption=evaluatePrediction(Y_predict_model2,testtxFeeSet_norm)
+  end = time.time()
+  log.write('\n\nMempoolModel(tx+mempool+block)\nRunning time: '+localtime+'\n'+'Consuming(seconds):'+str(end-start)+'\n')
+  log.write('RMSE:')
+  log.write(rmse_consumption)
+
+
+log.close()
